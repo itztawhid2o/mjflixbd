@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>MJ FLIX BD.COM</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+      margin: 20px 10px 5px;
+      color: #00ffc8;
+      animation: fadeInDown 1s ease;
+    }
+    @keyframes fadeInDown {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    #searchContainer {
+      text-align: center;
+      margin: 10px;
+      animation: fadeIn 1s ease;
+    }
+    #searchBox {
+      padding: 10px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: #333;
+      color: white;
+    }
+    h2 {
+      margin: 20px;
+      color: #ffcc00;
+      font-size: 1.5em;
+      border-left: 5px solid #ffcc00;
+      padding-left: 10px;
+      animation: fadeInUp 0.6s ease;
+    }
+    @keyframes fadeInUp {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    .group {
+      margin: 20px;
+    }
+    .channel-list {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px;
+      gap: 15px;
+      animation: slideIn 0.5s ease;
+    }
+    @keyframes slideIn {
+      from {opacity: 0; transform: translateX(100px);}
+      to {opacity: 1; transform: translateX(0);}
+    }
+    .channel {
+      background: #222;
+      border-radius: 15px;
+      text-align: center;
+      padding: 10px;
+      min-width: 120px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    }
+    .channel:hover {
+      background: #444;
+      transform: scale(1.05);
+    }
+    .channel img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #00ffc8;
+    }
+    #playerContainer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.8);
+      z-index: 999;
+    }
+    video {
+      width: 100%;
+      max-height: 300px;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+    .btn {
+      background: #333;
+      color: #fff;
+      padding: 5px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      background: #555;
+    }
+  </style>
+
+<script type='text/javascript' src='//separatelysmackfibber.com/19/5c/18/195c186416f0a12831ae2a4ee87763df.js'></script>
+
+<script type='text/javascript' src='//separatelysmackfibber.com/60/a0/f0/60a0f0c970425798eca9462d4ca161a5.js'></script>
+
+</head>
+<body>
+
+<h1>MJ Flix</h1>
+
+<script type="text/javascript">
+	atOptions = {
+		'key' : '6a4d8e8598afcc2a6363aa23d05df112',
+		'format' : 'iframe',
+		'height' : 60,
+		'width' : 468,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//separatelysmackfibber.com/6a4d8e8598afcc2a6363aa23d05df112/invoke.js"></script>
+
+<div id="searchContainer">
+  <input type="text" id="searchBox" placeholder="Scerch what you want 🥵...">
+</div>
+
+devoloper @TawHid_NoBiTa
+
+<div id="groupsContainer"></div>
+
+<div id="playerContainer">
+  <video id="videoPlayer" controls autoplay></video>
+  <div class="controls">
+    <button class="btn" onclick="skip(-10)">« 10s</button>
+    <button class="btn" onclick="skip(10)">10s »</button>
+  </div>
+</div>
+
+<script>
+  const m3uURL = "https://m3u.work/sLbX88.m3u";
+
+  async function loadM3U(url) {
+    const res = await fetch(url);
+    const text = await res.text();
+    const lines = text.split("\n");
+
+    const groups = {};
+    let currentInfo = null;
+
+    lines.forEach(line => {
+      if (line.startsWith("#EXTINF")) {
+        const name = line.match(/,(.*)/)[1];
+        const logoMatch = line.match(/tvg-logo="(.*?)"/);
+        const logo = logoMatch ? logoMatch[1] : "";
+        const groupMatch = line.match(/group-title="(.*?)"/);
+        const group = groupMatch ? groupMatch[1] : "Others";
+        currentInfo = { name, logo, group };
+      } else if (line.startsWith("http") && currentInfo) {
+        currentInfo.url = line;
+        if (!groups[currentInfo.group]) {
+          groups[currentInfo.group] = [];
+        }
+        groups[currentInfo.group].push({ ...currentInfo });
+        currentInfo = null;
+      }
+    });
+
+    displayGroups(groups);
+  }
+
+  function displayGroups(groups) {
+    const container = document.getElementById("groupsContainer");
+    container.innerHTML = "";
+    for (const groupName in groups) {
+      const groupDiv = document.createElement("div");
+      groupDiv.className = "group";
+      groupDiv.innerHTML = `<h2>${groupName}</h2>`;
+
+      const channelList = document.createElement("div");
+      channelList.className = "channel-list";
+
+      groups[groupName].forEach((ch) => {
+        const chDiv = document.createElement("div");
+        chDiv.className = "channel";
+        chDiv.innerHTML = `
+          <img src="${ch.logo}" alt="${ch.name}">
+          <div>${ch.name}</div>
+        `;
+        chDiv.onclick = () => playChannel(ch.url);
+        channelList.appendChild(chDiv);
+      });
+
+      groupDiv.appendChild(channelList);
+      container.appendChild(groupDiv);
+    }
+  }
+
+  function playChannel(url) {
+    const video = document.getElementById("videoPlayer");
+    video.src = url;
+    document.getElementById("playerContainer").style.display = "flex";
+  }
+
+  function skip(seconds) {
+    const video = document.getElementById("videoPlayer");
+    video.currentTime += seconds;
+  }
+
+  // Search Functionality
+  document.getElementById('searchBox').addEventListener('input', function () {
+    const keyword = this.value.toLowerCase();
+    const allChannels = document.querySelectorAll('.channel');
+    allChannels.forEach(ch => {
+      const name = ch.innerText.toLowerCase();
+      ch.style.display = name.includes(keyword) ? 'block' : 'none';
+    });
+  });
+
+  loadM3U(m3uURL);
+</script>
+
+<script type='text/javascript' src='//separatelysmackfibber.com/60/a0/f0/60a0f0c970425798eca9462d4ca161a5.js'></script>
+
+</body>
+</html>
+
+<script async="async" data-cfasync="false" src="//separatelysmackfibber.com/9836b306db829e2bea7ca60a527e5e79/invoke.js"></script>
+<div id="container-9836b306db829e2bea7ca60a527e5e79"></div>
+
+<script async="async" data-cfasync="false" src="//separatelysmackfibber.com/24690effbd08beac85250901e27da755/invoke.js"></script>
+<div id="container-24690effbd08beac85250901e27da755"></div>
+
+  
